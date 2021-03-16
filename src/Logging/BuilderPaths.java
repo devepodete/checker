@@ -1,10 +1,12 @@
 package Logging;
 
+import ProgramTesting.Checker;
+
 public class BuilderPaths {
     public static final String javacPath = "/usr/lib/jvm/jdk-15.0.2/bin/javac";
     public static final String buildClassPath = "/home/zero/Projects/IdeaProjects/Checker/out/production";
-    public static final String CheckerClassName = "Checker";
-    public static final String CheckerClassPath = String.join("/", buildClassPath, CheckerClassName);
+    public static final String CheckerClassName = "ProgramTesting.Checker";
+    public static final String CheckerClassPath = String.join("/", buildClassPath, "Checker");
 
-
+    public static final String buildLogFileName = "build.txt";
 }

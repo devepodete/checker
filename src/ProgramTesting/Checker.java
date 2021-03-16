@@ -21,9 +21,7 @@ public class Checker {
 
     public static final String rootDirectory = "/home/zero/Projects/IdeaProjects/Checker/testArea";
 
-    public static final String checkerConfigFileName = "logger.config";
     public static final String checkerLogsFileName = "checkerLogs.log";
-    public static final String checkerConfigFullPath = String.join("/", rootDirectory, checkerConfigFileName);
     public static final String checkerLogsFullPath = String.join("/", rootDirectory, checkerLogsFileName);
 
     public static final String testsFolderName = "tests";
@@ -67,6 +65,11 @@ public class Checker {
 
         boolean run = true;
         while (run) {
+            if (socket.isClosed()) {
+                checkerLogger.log(Level.WARNING,"Server socket was closed. Exiting.");
+                break;
+            }
+
             try {
                 Command cmd = (Command) commandSourceInputStream.readObject();
 
@@ -100,6 +103,7 @@ public class Checker {
                         Command.class.getName() + " class");
             } catch (Exception e) {
                 checkerLogger.log(Level.SEVERE, "Got some unknown exception", e);
+                break;
             }
         }
 
@@ -138,12 +142,6 @@ public class Checker {
         currentContest = args.get(0);
         currentProblem = args.get(1);
         currentSubmit = args.get(2);
-        List<String> mainDirectories = List.of(currentContest, currentProblem, currentSubmit);
-        if (! fileManager.directoriesExists(mainDirectories)) {
-            checkerLogger.log(Level.WARNING, "Some of directories " + mainDirectories.toString() +
-                    " does not exist. Checking is not possible.");
-            return false;
-        }
 
         currentProblemDirectory = String.join("/", rootDirectory,
                 currentContest, currentProblem);
@@ -152,12 +150,20 @@ public class Checker {
         currentSubmitDirectory = String.join("/",
                 currentProblemDirectory, currentSubmit);
 
+
         srcDirectory = String.join("/", currentSubmitDirectory, srcFolderName);
         if (! fileManager.directoryExists(srcDirectory)) {
             checkerLogger.log(Level.WARNING, "Source directory " + srcDirectory +
                     " does not exist. Checking is not possible.");
             return false;
         }
+        List<String> mainDirectories = List.of(currentSubmitDirectory, currentProblemTestsDirectory, srcDirectory);
+        if (! fileManager.directoriesExists(mainDirectories)) {
+            checkerLogger.log(Level.WARNING, "Some of directories " + mainDirectories.toString() +
+                    " does not exist. Checking is not possible.");
+            return false;
+        }
+
         buildDirectory = String.join("/", currentSubmitDirectory, buildFolderName);
         logDirectory = String.join("/", currentSubmitDirectory, logsFolderName);
 

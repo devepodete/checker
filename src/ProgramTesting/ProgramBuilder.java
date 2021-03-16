@@ -33,7 +33,7 @@ public class ProgramBuilder implements Buildable {
 
         try {
             Checker.checkerLogger.log(Level.INFO, "Compiling source code from " +
-                    executableFileFullPath);
+                    Checker.srcDirectory);
             Process compileProcess = executableBuilder.start();
             int compileRes = compileProcess.waitFor();
             if (compileRes == Checker.OK) {

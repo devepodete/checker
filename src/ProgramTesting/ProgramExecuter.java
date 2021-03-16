@@ -34,8 +34,12 @@ public class ProgramExecuter implements Runnable {
 
         Arrays.sort(testsFoldersNames, Comparator.comparing(Integer::valueOf));
 
+        Checker.checkerLogger.log(Level.INFO, "Checker found " + testsFoldersNames.length + " tests.");
+        Checker.checkerLogger.log(Level.INFO, "Testing started...");
+
         int currentTest = 1;
         for (String testFolderName : testsFoldersNames) {
+            Checker.checkerLogger.log(Level.INFO, "Current test: " + currentTest);
             String inputFullName = String.join("/",
                     Checker.currentProblemTestsDirectory, testFolderName, RunnerPaths.inputName);
             String correctOutputFullName = String.join("/",
@@ -82,8 +86,10 @@ public class ProgramExecuter implements Runnable {
                 logException(e);
                 return;
             }
+            currentTest++;
         }
 
+        Checker.checkerLogger.log(Level.INFO, "ALL TESTS ARE PASSED");
         Checker.writeVerdict(Verdicts.OK);
     }
 

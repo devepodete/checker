@@ -1,5 +1,5 @@
 package ProgramTesting;
 
 public interface Buildable {
-    void build();
+    boolean build();
 }

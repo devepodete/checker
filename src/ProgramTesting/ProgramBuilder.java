@@ -1,6 +1,12 @@
 package ProgramTesting;
 
+import Logging.BuilderPaths;
+import Logging.GeneralPaths;
+import Logging.Verdicts;
+
+
 import java.io.File;
+import java.util.logging.Level;
 
 public class ProgramBuilder implements Buildable {
 
@@ -9,27 +15,38 @@ public class ProgramBuilder implements Buildable {
     public static final String cppVersion = "-std=c++17";
 
 
-
     public ProgramBuilder() {
 
     }
 
     @Override
-    public void build() {
-        String executableFileFullPath = String.join("/", executableDirectory, executableName);
+    public boolean build() {
+        String executableFileFullPath = String.join("/", Checker.executableDirectory, GeneralPaths.executableName);
         ProcessBuilder executableBuilder = new ProcessBuilder(
                 "g++", cppVersion, sanitizerFlags,
                 mainFileName, "-o", executableFileFullPath)
-                .directory(new File(srcDirectory));
+                .directory(new File(Checker.srcDirectory));
 
-        String buildLogFileFullPath = String.join("/", logDirectory, buildLogFileName);
+        String buildLogFileFullPath = String.join("/", Checker.logDirectory, BuilderPaths.buildLogFileName);
         executableBuilder.redirectErrorStream(true);
         executableBuilder.redirectOutput(ProcessBuilder.Redirect.to(new File(buildLogFileFullPath)));
 
-        System.out.println("Compiling...");
-        System.out.println("compiling in directory: " + srcDirectory);
-        System.out.println("executable full path: " + executableFileFullPath);
-        Process compileProcess = executableBuilder.start();
-        int compileRes = compileProcess.waitFor();
+        try {
+            Checker.checkerLogger.log(Level.INFO, "Compiling source code from " +
+                    executableFileFullPath);
+            Process compileProcess = executableBuilder.start();
+            int compileRes = compileProcess.waitFor();
+            if (compileRes == Checker.OK) {
+                Checker.checkerLogger.log(Level.INFO, "Compilation Completed");
+                return true;
+            } else {
+                Checker.checkerLogger.log(Level.INFO, "Compilation Failed");
+                Checker.writeVerdict(Verdicts.CE);
+            }
+        } catch (Exception e) {
+            Checker.checkerLogger.log(Level.WARNING, "Exception was caught during compilation");
+            Checker.writeVerdict(Verdicts.CHECKER_ERROR);
+        }
+        return false;
     }
 }

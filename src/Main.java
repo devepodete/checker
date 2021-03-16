@@ -10,16 +10,18 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.TimeUnit;
 
 
 public class Main {
-
     static ServerSocket serverSocket;
     static Socket checkerSocket;
     static Process checkerProcess;
 
     static ObjectOutputStream writeToCheckerStream;
 
+    final static long MAX_CHECKER_EXIT_WAIT_TIME_SECONDS = 5;
+    
     public static void main(String[] args) throws IOException, InterruptedException {
         //System.out.println("Building checker... ");
         //buildChecker();
@@ -39,8 +41,10 @@ public class Main {
         CommandReader commandReader = new CommandReader(System.in);
         do {
             System.out.print("> ");
+            System.out.flush();
             commandReader.read();
             Command curCommand = commandReader.getCommand();
+            System.out.println("Got command: " + curCommand.getCommandType() + " " + curCommand.getCommandArguments().toString());
             if (curCommand.getCommandType() != CommandType.INVALID_COMMAND) {
                 writeToCheckerStream.writeObject(curCommand);
                 System.out.println("Command sent to checker");
@@ -51,7 +55,7 @@ public class Main {
             if (curCommand.getCommandType() == CommandType.EXIT) {
                 break;
             }
-        } while (commandReader.hasNext());
+        } while (true);
 
 
         System.out.println("Terminating Main...");
@@ -94,8 +98,13 @@ public class Main {
 
     public static void terminate() throws InterruptedException, IOException {
         System.out.println("Waiting for checker process to terminate... ");
-        checkerProcess.waitFor();
-
+        boolean exitedNormally = checkerProcess.waitFor(MAX_CHECKER_EXIT_WAIT_TIME_SECONDS, TimeUnit.SECONDS);
+        if (exitedNormally) {
+            System.out.println("Checker finished job normally");
+        } else {
+            System.out.println("Checker was killed");
+        }
+        
         System.out.println("Closing objectOutputStream... ");
         writeToCheckerStream.close();
 

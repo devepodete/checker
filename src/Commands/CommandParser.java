@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CommandParser implements StringParser {
-    private Command command;
+    private Command command = new Command();
 
     public CommandParser(){}
 

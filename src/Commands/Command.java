@@ -1,11 +1,12 @@
 package Commands;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Command implements Serializable {
     private CommandType commandType;
-    private List<String> commandArguments;
+    private ArrayList<String> commandArguments;
 
     public Command() {}
 
@@ -17,11 +18,11 @@ public class Command implements Serializable {
         this.commandType = commandType;
     }
 
-    public List<String> getCommandArguments() {
+    public ArrayList<String> getCommandArguments() {
         return commandArguments;
     }
 
-    public void setCommandArguments(List<String> commandArguments) {
-        this.commandArguments = commandArguments;
+    public void setCommandArguments(ArrayList<String> commandArguments) {
+        this.commandArguments = new ArrayList<>(commandArguments);
     }
 }

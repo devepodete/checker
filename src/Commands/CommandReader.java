@@ -25,6 +25,6 @@ public class CommandReader implements AbstractCommandReader {
 
     @Override
     public void read() {
-        commandParser.parseCommand(scanner.nextLine());
+        commandParser.parse(scanner.nextLine());
     }
 }

@@ -1,5 +1,6 @@
 package Commands;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class CommandParser implements StringParser {
         }
 
         parseCommand(strings.get(0));
-        command.setCommandArguments(strings.subList(1, strings.size()));
+        command.setCommandArguments(new ArrayList<>(strings.subList(1, strings.size())));
     }
 
     public void parseCommand(String cmd) {

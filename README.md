@@ -9,3 +9,5 @@ Main запускает в отдельном процессе ProgramTesting.Ch
   - `check contest problem submit` - проверить посылку
   - `exit` - выход
 
+Схематичное представление структуры контеста:
+![structure_scheme](img/checker_hierarchy(1).png)
